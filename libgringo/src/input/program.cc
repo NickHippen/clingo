@@ -236,6 +236,17 @@ private:
     bool normal_;
 };
 
+void Program::printWithStats(std::ostream &out) const {
+    for (auto &block : blocks_) {
+        //EDB is uninteresting for rule grounding stats
+        //for (auto &x : block.addedEdb)          { out << x << "." << "\n"; }
+        //for (auto &x : std::get<1>(*block.edb)) { out << x << "." << "\n"; }
+        for (auto &x : block.addedStms)         { x->printWithStats(out); out << "\n"; }
+        for (auto &x : block.stms)              { x->printWithStats(out); out << "\n"; }
+    }
+    for (auto &x : stms_) { x->printWithStats(out); out << "\n"; }
+}
+
 Ground::Program Program::toGround(std::set<Sig> const &sigs, DomainData &domains, Logger &log) {
     HashSet<uint64_t> neg;
     Ground::Program::ClassicalNegationVec negate;

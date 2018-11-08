@@ -27,6 +27,7 @@
 #include "gringo/output/literals.hh"
 #include "gringo/output/output.hh"
 #include "gringo/ground/binders.hh"
+#include "gringo/input/statement.hh"
 #include "gringo/logger.hh"
 #include <limits>
 
@@ -411,6 +412,9 @@ void Rule::report(Output::OutputBase &out, Logger &log) {
             auto &dom = *out.predDoms()[head.domain()];
             dom[head.offset()].setFact(true);
         }
+        if (origin != NULL) {
+            origin->stats.incrementCounters(rule.body().size());
+        }
         out.output(rule);
     }
 }
@@ -693,6 +697,9 @@ void WeakConstraint::report(Output::OutputBase &out, Logger &log) {
             if (x->auxiliary()) { continue; }
             auto lit = x->toOutput(log);
             if (!lit.second) { tempLits.emplace_back(lit.first); }
+        }
+        if (origin != NULL) {
+            origin->stats.incrementCounters(tempLits.size());
         }
         Output::WeakConstraint min(tempVals, tempLits);
         out.output(min);
@@ -2071,6 +2078,9 @@ void HeadAggregateRule::report(Output::OutputBase &out, Logger &log) {
     assert(!undefined);
     Id_t offset = numeric_cast<Id_t>(ret.first - dom.begin());
     rule.addHead(Output::LiteralId{NAF::POS, Output::AtomType::HeadAggregate, offset, dom.domainOffset()});
+    if (origin != NULL) {
+        origin->stats.incrementCounters(rule.body().size());
+    }
     out.output(rule);
 }
 
@@ -2372,6 +2382,9 @@ void DisjunctionRule::report(Output::OutputBase &out, Logger &log) {
     complete_.enqueue(ret.first);
     Id_t offset = numeric_cast<Id_t>(ret.first - dom.begin());
     rule.addHead(Output::LiteralId{NAF::POS, Output::AtomType::Disjunction, offset, dom.domainOffset()});
+    if (origin != NULL) {
+        origin->stats.incrementCounters(rule.body().size());
+    }
     out.output(rule);
 }
 

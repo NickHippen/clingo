@@ -162,6 +162,10 @@ struct IncrementalControl : Control {
             LOG << "************* intermediate program *************" << std::endl << gPrg << std::endl;
             LOG << "*************** grounded program ***************" << std::endl;
             gPrg.ground(params, scripts, out, logger_);
+            if (opts.verbose) {
+                std::cerr << "body=0\tbody=1\tbody=2\tbody>2\tintermediate-rule" << std::endl;
+                prg.printWithStats(std::cerr);
+            }
         }
     }
     void add(std::string const &name, StringVec const &params, std::string const &part) override {

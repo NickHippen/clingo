@@ -1,0 +1,7 @@
+Demonstrates the instantiation statistics output obtained with --verbose.
+
+Author: Peter Schüller (2016)
+
+Example calls:
+  gringo --verbose demo.lp >/dev/null
+

@@ -33,6 +33,24 @@
 
 namespace Gringo { namespace Input {
 
+// {{{ definition of StatementStat::StatementStat
+
+StatementStat::StatementStat()
+    : nbrGround0(0)
+    , nbrGround1(0)
+    , nbrGround2(0)
+    , nbrGroundN(0) {}
+ void StatementStat::incrementCounters(unsigned bodyLiterals) const {
+  switch (bodyLiterals) {
+    case 0: nbrGround0++; break;
+    case 1: nbrGround1++; break;
+    case 2: nbrGround2++; break;
+    default: nbrGroundN++; break;
+  }
+}
+
+// }}}
+
 // {{{ definition of Statement::Statement
 
 Statement::Statement(UHeadAggr &&head, UBodyAggrVec &&body, StatementType type)
@@ -79,6 +97,11 @@ void Statement::print(std::ostream &out) const {
         out << ".";
         head->print(out);
     }
+}
+
+void Statement::printWithStats(std::ostream &out) const {
+  out << stats.nbrGround0 << "\t" << stats.nbrGround1 << "\t" << stats.nbrGround2 << "\t" << stats.nbrGroundN << "\t";
+  print(out);
 }
 
 // }}}
@@ -309,6 +332,7 @@ void toGround(CreateHead &&head, UBodyAggrVec const &body, ToGroundArg &x, Groun
 } // namespace
 
 void Statement::toGround(ToGroundArg &x, Ground::UStmVec &stms) const {
+    auto size = stms.size();
     Ground::RuleType t = Ground::RuleType::Disjunctive;
     switch (type) {
         case StatementType::EXTERNAL:   { t = Ground::RuleType::External;   break; }
@@ -316,6 +340,7 @@ void Statement::toGround(ToGroundArg &x, Ground::UStmVec &stms) const {
         case StatementType::RULE:       { t = Ground::RuleType::Disjunctive;     break; }
     }
     Gringo::Input::toGround(head->toGround(x, stms, t), body, x, stms);
+    for (auto it = stms.begin()+size; it != stms.end(); ++it) (*it)->origin = this;
 }
 
 // }}}

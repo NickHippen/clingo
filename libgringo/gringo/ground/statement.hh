@@ -28,7 +28,13 @@
 #include <gringo/ground/literal.hh>
 #include <gringo/ground/dependency.hh>
 
-namespace Gringo { namespace Ground {
+namespace Gringo {
+
+namespace Input {
+struct Statement;
+}
+
+namespace Ground {
 
 // {{{ declaration of Statement
 
@@ -40,7 +46,10 @@ public:
     virtual void startLinearize(bool active) = 0;
     virtual void linearize(Context &context, bool positive, Logger &log) = 0;
     virtual void enqueue(Queue &q) = 0;
+    Statement(): origin(NULL) {}
     virtual ~Statement() { }
+
+    const Gringo::Input::Statement* origin;
 };
 
 // }}}
